@@ -12,7 +12,11 @@
 #define ECHO_PIN 10
 #define BUZZER_PIN 8
 
-// Detection distance in centimetres
+// LED pins
+#define GREEN_LED 6
+#define RED_LED 7
+
+// Detection distance
 #define DETECT_DISTANCE 50
 
 Adafruit_SSD1306 display(
@@ -65,6 +69,9 @@ void setup() {
   pinMode(ECHO_PIN, INPUT);
   pinMode(BUZZER_PIN, OUTPUT);
 
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+
   digitalWrite(BUZZER_PIN, LOW);
 
   Serial.begin(9600);
@@ -93,6 +100,15 @@ void loop() {
 
   personDetected = nearPerson;
 
+  // LED control
+  if (nearPerson) {
+    digitalWrite(GREEN_LED, HIGH);
+    digitalWrite(RED_LED, LOW);
+  } else {
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(RED_LED, HIGH);
+  }
+
   display.clearDisplay();
 
   // Animated border
@@ -102,18 +118,16 @@ void loop() {
 
   if (nearPerson) {
 
-    // Welcome message
     centreText("WELCOME!", 13, 2);
     centreText("Atal Tinkering Lab", 35, 1);
     centreText("of PM SHRI KV Picket", 47, 1);
 
-    // Moving decorative dot
     int x = 5 + (millis() / 20) % 110;
     display.fillCircle(x, 5, 2, SSD1306_WHITE);
 
   } else {
 
-    // Waiting animation: . -> .. -> ...
+    // Waiting animation
     if (millis() - previousMillis >= dotInterval) {
       previousMillis = millis();
 
